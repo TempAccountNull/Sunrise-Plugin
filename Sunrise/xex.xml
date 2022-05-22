@@ -9,5 +9,5 @@
     <allpackages/>
   </mediatypes>
 
-  <baseaddr addr = "0x91C00000"/>
+  <baseaddr addr = "0x91A00000"/>
 </xex>

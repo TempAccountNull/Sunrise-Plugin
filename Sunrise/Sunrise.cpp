@@ -64,6 +64,7 @@ int __fastcall lsp_server_hook(char *lsp_manager, int service_type, DWORD *out_c
 
 DWORD lastTitleId;
 DWORD Halo3 = 0x4D5307E6;
+DWORD HaloReach = 0x4D53085B;
 void startup()
 {
 	while(true) {
@@ -79,10 +80,32 @@ void startup()
 
 				patchInJump((DWORD*) 0x823B8EF0, (DWORD)&lsp_server_hook, false);
 
-				// Skips what seems to be a check that prevents users who haven't got a connection to the game API from playing.
-				if (allowRetails)
+				if (allowRetails) {
+					// allow MM to start with offline peers
 					*((DWORD*)(0x822BA37C)) = 0x60000000;
+					// disable host migration before map/game variants are downloaded.
+					*((DWORD*)(0x824004BC)) = 0x60000000;
+					*((DWORD*)(0x824004C0)) = 0x60000000;
+					*((DWORD*)(0x824004C4)) = 0x60000000;
+					*((DWORD*)(0x824004C8)) = 0x60000000;
+					*((DWORD*)(0x824004CC)) = 0x60000000;
+					*((DWORD*)(0x824004D0)) = 0x60000000;
+					*((DWORD*)(0x824004D4)) = 0x60000000;
+					*((DWORD*)(0x824004D8)) = 0x60000000;
+				}
 			}
+
+			//if (titleID == HaloReach) {
+			//	PatchModuleImport((PLDR_DATA_TABLE_ENTRY)*XexExecutableModuleHandle, "xam.xex", 12, (DWORD)NetDll_connectHook); // connect
+			//	PatchModuleImport((PLDR_DATA_TABLE_ENTRY)*XexExecutableModuleHandle, "xam.xex",  3, (DWORD)NetDll_socketHook); // socket
+			//	PatchModuleImport((PLDR_DATA_TABLE_ENTRY)*XexExecutableModuleHandle, "xam.xex", 51, (DWORD)NetDll_XNetStartupHook);
+
+			//	patchInJump((DWORD*) 0x822712B0, (DWORD)&lsp_server_hook, false);
+
+			//	// Skips what seems to be a check that prevents users who haven't got a connection to the game API from playing.
+			//	//if (allowRetails)
+			//	//	*((DWORD*)(0x822BA37C)) = 0x60000000;
+			//}
 
 			lastTitleId = titleID;
 		}
